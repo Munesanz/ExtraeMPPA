@@ -1,5 +1,7 @@
 # http://www.gnu.org/software/automake
 
+config.h
+congih.h.~
 Makefile.in
 /ar-lib
 /mdate-sh
@@ -28,7 +30,8 @@ autom4te.cache
 /install-sh
 /missing
 /stamp-h1
-
+/ins
+/ins2
 # https://www.gnu.org/software/libtool/
 
 /ltmain.sh
