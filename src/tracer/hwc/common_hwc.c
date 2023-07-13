@@ -334,11 +334,6 @@ void HWC_Initialize (int options)
 
 	HWC_current_glopsbegin = (unsigned long long *)malloc(sizeof(unsigned long long) * num_threads);
 	ASSERT(HWC_current_glopsbegin != NULL, "Cannot allocate memory for HWC_current_glopsbegin");
-
-//L4STAT must parse enviorment variables before initializing the HWCs
-#if !defined(L4STAT)
-	HWCBE_INITIALIZE(options);
- #endif
 }
 
 /**

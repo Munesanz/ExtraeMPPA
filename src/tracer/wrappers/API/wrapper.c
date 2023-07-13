@@ -1691,7 +1691,7 @@ int Backend_preInitialize (int me, int world_size, const char *config_file, int 
 			fprintf (stderr, PACKAGE_NAME": Insufficient memory allocated for tentative OMP_NUM_THREADS\n");
 			exit (-1);
 		}
-
+#if !defined (OS_RTEMS)
 		sprintf (new_num_omp_threads_clause, "OMP_NUM_THREADS=%d", numProcessors);
 		omp_value = getenv ("OMP_NUM_THREADS");
 		if (omp_value)
@@ -1699,10 +1699,6 @@ int Backend_preInitialize (int me, int world_size, const char *config_file, int 
 			int num_of_threads = atoi (omp_value);
 			if (num_of_threads != 0)
 			{
-#if defined(OS_RTEMS)
-				if(mppa_multiple_clusters)
-					num_of_threads *= mppa_cos_get_nb_clusters();
-#endif
 				current_NumOfThreads = maximum_NumOfThreads = num_of_threads;
 				if (me == 0)
 					fprintf (stdout, PACKAGE_NAME": OMP_NUM_THREADS set to %d\n", num_of_threads);
@@ -1720,6 +1716,9 @@ int Backend_preInitialize (int me, int world_size, const char *config_file, int 
 				fprintf (stderr, PACKAGE_NAME": OMP_NUM_THREADS is not set, allocating buffers for %d thread(s)\n", numProcessors);
 			current_NumOfThreads = maximum_NumOfThreads = numProcessors;
 		}
+#else
+	current_NumOfThreads = maximum_NumOfThreads = numProcessors;
+#endif
 	}
 
 #elif defined(SMPSS_SUPPORT) || defined(NANOS_SUPPORT) || defined (UPC_SUPPORT)
