@@ -11,7 +11,7 @@ $autoreconf -vfi
 Then change PATHS and run configure:
 
 ```console
-$./configure --prefix=INSTALL_PATH --without-dyninst --with-papi=/work1/amurena/csw/kEnv/kvxtools/opt/kalray/accesscore/kvx-cos --with-papi-headers=PAPI_HEADERS_PATH --without-mpi --without-unwind --without-binutils --without-libz --disable-nanos --disable-smpss --disable-xml --enable-merge-in-trace --disable-parallel-merge --enable-gr740 --disable-pthread --disable-sampling --disable-pebs-sampling --host=kvx-cos CFLAGS="-g -O2 -fPIC" host_alias=kvx-cos
+$./configure --prefix=INSTALL_PATH --without-dyninst --with-papi=PAPI_PATH --with-papi-headers=PAPI_HEADERS_PATH --without-mpi --without-unwind --without-binutils --without-libz --disable-nanos --disable-smpss --disable-xml --enable-merge-in-trace --disable-parallel-merge --enable-gr740 --disable-pthread --disable-sampling --disable-pebs-sampling --host=kvx-cos CFLAGS="-g -O2 -fPIC" host_alias=kvx-cos
 ```
 
 Finally run make install to compile and install Extrae:
