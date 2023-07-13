@@ -336,7 +336,7 @@ void HWC_Initialize (int options)
 	ASSERT(HWC_current_glopsbegin != NULL, "Cannot allocate memory for HWC_current_glopsbegin");
 
 //L4STAT must parse enviorment variables before initializing the HWCs
-#if defined(OS_RTEMS)
+#if !defined(L4STAT)
 	HWCBE_INITIALIZE(options);
  #endif
 }
