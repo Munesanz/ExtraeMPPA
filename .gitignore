@@ -1,8 +1,8 @@
 # http://www.gnu.org/software/automake
 
 config.h
-congih.h.~
-extrae-vars.sh
+config.h.in~
+etc/extrae-vars.sh
 Makefile.in
 /ar-lib
 /mdate-sh
