@@ -78,6 +78,11 @@ extern int css_get_max_threads();
 # include <external/upc.h>
 #endif
 
+#if defined (OS_RTEMS)
+	# include "wrapper.h"
+	# include <mppa_cos.h>
+#endif
+
 unsigned Extrae_get_thread_number (void)
 {
 #if defined(OMP_SUPPORT) 
@@ -89,6 +94,14 @@ unsigned Extrae_get_thread_number (void)
 	else
 # endif /* OMPT_SUPPORT */
 	{
+#if defined(OS_RTEMS)
+		if (mppa_multiple_clusters){
+			 if(Extrae_is_initialized_Wrapper()== 0 && omp_get_thread_num()==0)
+                        return 0;
+             return omp_get_thread_num()+(omp_get_num_threads()*mppa_cos_get_cluster_id());
+		}
+		else
+#endif
 		return omp_get_thread_num();
 	}
 #elif defined(SMPSS_SUPPORT)

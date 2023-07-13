@@ -154,7 +154,9 @@
 #include "syscall_wrapper.h"
 #include "taskid.h"
 
-#include <mppa_cos.h>
+#if defined(OS_RTEMS)
+# include <mppa_cos.h>
+#endif
 int Extrae_Flush_Wrapper (Buffer_t *buffer);
 
 static int requestedDynamicMemoryInstrumentation = FALSE;
@@ -214,6 +216,11 @@ int tracejant_hwc_omp = TRUE;
 
 /***** Variable global per saber si pthread s'ha de tracejar **************/
 int tracejant_pthread = TRUE;
+
+#if defined (OS_RTEMS)
+	/***** Global variable to know if we should trace multiple clusters **************/
+	int mppa_multiple_clusters = FALSE;
+#endif
 
 /* Mutex to prevent double free's from dying pthreads */
 pthread_mutex_t pthreadFreeBuffer_mtx = PTHREAD_MUTEX_INITIALIZER;
@@ -1449,10 +1456,12 @@ static int getnumProcessors (void)
 		//fprintf (stderr, PACKAGE_NAME": Cannot determine number of configured processors using sysconf\n");
 		//exit (-1);
 
-
 	 	numProcessors=omp_get_max_threads();
-	
-		
+#if defined(OS_RTEMS)
+		if(mppa_multiple_clusters)
+			numProcessors= numProcessors*mppa_cos_get_nb_clusters();
+#endif
+
 	}
 #else
 # error "Cannot determine number of processors"
@@ -1657,6 +1666,15 @@ int Backend_preInitialize (int me, int world_size, const char *config_file, int 
 	{
 		Extrae_OpenMP_init(me);
 
+#if defined(OS_RTEMS) && defined(OMP_SUPPORT)
+		char *str = getenv("ENABLE_MULTIPLE_CLUSTERS");
+		if (str != NULL && (strcmp (str, "1") == 0))
+		{
+			if (me == 0)
+				fprintf (stdout, PACKAGE_NAME": Multiple Clusters Mode enabled for MPPA.\n");
+			mppa_multiple_clusters = TRUE;
+		}
+#endif
 		/* Obtain the number of runnable threads in this execution.
 		   Just check for OMP_NUM_THREADS env var (if this compilation
 		   allows instrumenting OpenMP */
@@ -1681,6 +1699,10 @@ int Backend_preInitialize (int me, int world_size, const char *config_file, int 
 			int num_of_threads = atoi (omp_value);
 			if (num_of_threads != 0)
 			{
+#if defined(OS_RTEMS)
+				if(mppa_multiple_clusters)
+					num_of_threads *= mppa_cos_get_nb_clusters();
+#endif
 				current_NumOfThreads = maximum_NumOfThreads = num_of_threads;
 				if (me == 0)
 					fprintf (stdout, PACKAGE_NAME": OMP_NUM_THREADS set to %d\n", num_of_threads);
@@ -2556,9 +2578,7 @@ void Backend_setInInstrumentation (unsigned thread, int ininstrumentation)
 
 void Backend_ChangeNumberOfThreads_InInstrumentation (unsigned nthreads)
 {
-	mppa_cos_mspace_t mspace_ddr_priv = mppa_cos_get_global_mspace();
-	Extrae_inInstrumentation = mppa_cos_realloc(mspace_ddr_priv, Extrae_inInstrumentation , sizeof(int)*nthreads);
-	//Extrae_inInstrumentation = (int*) realloc (Extrae_inInstrumentation, sizeof(int)*nthreads);
+	Extrae_inInstrumentation = (int*) realloc (Extrae_inInstrumentation, sizeof(int)*nthreads);
 	if (Extrae_inInstrumentation == NULL)
 	{
 		fprintf (stderr, PACKAGE_NAME

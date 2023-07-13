@@ -141,6 +141,9 @@ void Extrae_setCheckControlFile (int b);
 void Extrae_setCheckControlFileName (const char *f);
 void Extrae_setCheckForGlobalOpsTracingIntervals (int b);
 
+#if defined (OS_RTEMS)
+extern int mppa_multiple_clusters;
+#endif
 /* Are HWC enabled? */
 extern int Trace_HWC_Enabled;  
 #define TRACING_HWC (Trace_HWC_Enabled)

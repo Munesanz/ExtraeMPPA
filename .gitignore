@@ -2,6 +2,7 @@
 
 config.h
 congih.h.~
+extrae-vars.sh
 Makefile.in
 /ar-lib
 /mdate-sh
