@@ -415,7 +415,7 @@ int Paraver_ProcessTraceFiles (unsigned long nfiles,
 	for (i = 0; i < nfiles; i++)
 #if defined(OS_RTEMS)
 		/* In Cluster OS the time sync event may exist in any thread */
-		if (SynchronizationTimes[i] != 0);
+		if (SynchronizationTimes[i] != 0)
 #else
 		if (files[i].thread-1 == 0)
 #endif
