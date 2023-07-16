@@ -96,8 +96,6 @@ unsigned Extrae_get_thread_number (void)
 	{
 #if defined(OS_RTEMS)
 		if (mppa_multiple_clusters){
-			 if(Extrae_is_initialized_Wrapper()== 0 && omp_get_thread_num()==0)
-                        return 0;
              return omp_get_thread_num()+(omp_get_max_threads()*mppa_cos_get_cluster_id());
 		}
 		else

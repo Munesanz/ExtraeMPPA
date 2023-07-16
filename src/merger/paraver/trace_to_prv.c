@@ -413,7 +413,12 @@ int Paraver_ProcessTraceFiles (unsigned long nfiles,
 
 	TimeSync_Initialize (num_appl, num_appl_tasks);
 	for (i = 0; i < nfiles; i++)
+#if defined(OS_RTEMS)
+		/* In Cluster OS the time sync event may exist in any thread */
+		if (SynchronizationTimes[i] != 0);
+#else
 		if (files[i].thread-1 == 0)
+#endif
 			TimeSync_SetInitialTime (files[i].ptask-1,
 			  files[i].task-1,
 			  StartingTimes[i],

@@ -1335,7 +1335,10 @@ int Search_Synchronization_Times (int taskid, int ntasks, FileSet_t * fset,
 	for (i=0; i<fset->nfiles; i++)
 	{
 		/* All threads within a task share the synchronization times */
+#if !defined(OS_RTEMS)
+		/* In Cluster OS the time sync event may exist in any thread */
 		if (fset->files[i].thread - 1 == 0)
+#endif
 		{
 			current = Current_FS (&(fset->files[i]));
 			if (current != NULL)
