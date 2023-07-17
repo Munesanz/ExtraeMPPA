@@ -253,7 +253,7 @@ int Paraver_ProcessTraceFiles (unsigned long nfiles,
 	error = (fset == NULL);
 
 
-#if defined(OS_RTEMS)
+#if defined(OS_RTEMS) || defined(OS_CLUSTER)
 	if(!get_merge_GivenTraceName())
 	{
 		char *str,*path;
@@ -413,7 +413,7 @@ int Paraver_ProcessTraceFiles (unsigned long nfiles,
 
 	TimeSync_Initialize (num_appl, num_appl_tasks);
 	for (i = 0; i < nfiles; i++)
-#if defined(OS_RTEMS)
+#if defined(OS_CLUSTER)
 		/* In Cluster OS the time sync event may exist in any thread */
 		if (SynchronizationTimes[i] != 0)
 #else
@@ -754,7 +754,7 @@ int Paraver_ProcessTraceFiles (unsigned long nfiles,
 	{
 		if (error == 0)
 		{
-#if defined(OS_RTEMS)
+#if defined(OS_RTEMS) || defined(OS_CLUSTER)
 			if(!binary_exists)
 					fprintf (stdout, "mpi2prv: WARNING binary file can not be found at the NFS mounted folder, calltrace info (function names) will be empty \n");
 #endif

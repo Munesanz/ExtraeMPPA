@@ -23,7 +23,7 @@
 
 #include "common.h"
 
-#if defined (HAVE_DLFCN_H) && !defined(OS_RTEMS)
+#if defined (HAVE_DLFCN_H) && !defined(OS_CLUSTER)
 # define __USE_GNU
 # include <dlfcn.h>
 # undef  __USE_GNU
@@ -146,8 +146,8 @@ void Extrae_OpenMP_init(int me)
 #else  /* PIC */
 	if (me == 0)
 	{
-#if  defined(OS_RTEMS)
-		fprintf (stderr, PACKAGE_NAME": Alpha version static library linked wrapping for KALRAY MPPA\n");
+#if  defined(OS_RTEMS) || defined(OS_CLUSTER)
+		fprintf (stderr, PACKAGE_NAME": Alpha version static library linked wrapping for KALRAY MPPA and RTEMS\n");
 		_extrae_gnu_libgomp_init(0);
 		omp_common_get_hook_points_c(0);
 #else

@@ -154,7 +154,7 @@
 #include "syscall_wrapper.h"
 #include "taskid.h"
 
-#if defined(OS_RTEMS)
+#if defined(OS_CLUSTER)
 # include <mppa_cos.h>
 #endif
 int Extrae_Flush_Wrapper (Buffer_t *buffer);
@@ -217,7 +217,7 @@ int tracejant_hwc_omp = TRUE;
 /***** Variable global per saber si pthread s'ha de tracejar **************/
 int tracejant_pthread = TRUE;
 
-#if defined (OS_RTEMS)
+#if defined(OS_CLUSTER)
 	/***** Global variable to know if we should trace multiple clusters **************/
 	int mppa_multiple_clusters = FALSE;
 	/***** Global variable to know which cluster will trace the hardware counters **************/
@@ -586,7 +586,7 @@ void Backend_createExtraeDirectory (int taskid, int Temporal)
 		attempts--;
 	}
 	
-#if !defined(OS_RTEMS)
+#if !defined(OS_CLUSTER)
 	{
 		if (!ret && attempts == 0 && Temporal)
 			fprintf (stderr, PACKAGE_NAME ": Error! Task %d was unable to create temporal directory %s\n", taskid, dirname);
@@ -637,7 +637,7 @@ static int read_environment_variables (int me)
 	{
 		HWC_Initialize (0);
 		HWC_Parse_Env_Config (me);
-#if defined(OS_RTEMS)
+#if defined(OS_CLUSTER)
 //In clusterOS PAPI init is delayed if we use multiple clusters
 		if(!mppa_multiple_clusters)
 			HWCBE_INITIALIZE(0);
@@ -928,7 +928,7 @@ static int read_environment_variables (int me)
 		if (me == 0)
 			fprintf (stdout, PACKAGE_NAME": HWC reported in the OpenMP calls.\n");
 		tracejant_hwc_omp = TRUE;
-#if defined (OS_RTEMS)
+#if defined(OS_CLUSTER)
 		str = getenv("EXTRAE_MPPA_CLUSTER_HWC");
 		if (mppa_multiple_clusters)
 		{
@@ -1007,7 +1007,7 @@ static int read_environment_variables (int me)
 
 	/* Add sampling capabilities */
 #if defined(SAMPLING_SUPPORT)
-#if !defined(OS_RTEMS)
+#if !defined(OS_RTEMS) && !defined(OS_CLUSTER)
 	str = getenv ("EXTRAE_SAMPLING_PERIOD");
 	if (str != NULL)
 	{
@@ -1480,7 +1480,7 @@ static int getnumProcessors (void)
 		//exit (-1);
 
 	 	numProcessors=omp_get_max_threads();
-#if defined(OS_RTEMS)
+#if defined(OS_CLUSTER)
 		if(mppa_multiple_clusters)
 			numProcessors= numProcessors*mppa_cos_get_nb_clusters();
 #endif
@@ -1689,7 +1689,7 @@ int Backend_preInitialize (int me, int world_size, const char *config_file, int 
 	{
 		Extrae_OpenMP_init(me);
 
-#if defined(OS_RTEMS) && defined(OMP_SUPPORT)
+#if defined(OS_CLUSTER) && defined(OMP_SUPPORT)
 		char *str = getenv("EXTRAE_MPPA_ENABLE_MULTIPLE_CLUSTERS");
 		if (str != NULL && (strcmp (str, "1") == 0))
 		{
@@ -1714,7 +1714,7 @@ int Backend_preInitialize (int me, int world_size, const char *config_file, int 
 			fprintf (stderr, PACKAGE_NAME": Insufficient memory allocated for tentative OMP_NUM_THREADS\n");
 			exit (-1);
 		}
-#if !defined (OS_RTEMS)
+#if !defined(OS_CLUSTER)
 		sprintf (new_num_omp_threads_clause, "OMP_NUM_THREADS=%d", numProcessors);
 		omp_value = getenv ("OMP_NUM_THREADS");
 		if (omp_value)
@@ -2906,7 +2906,7 @@ static void Extrae_getExecutableInfo (void)
         static Extrae_getExecutableInfo_first_time_call = 0;
         if (!Extrae_getExecutableInfo_first_time_call)
         {
-#if !defined(OS_RTEMS)
+#if !defined(OS_RTEMS) && !defined(OS_CLUSTER)
             fprintf (stderr, PACKAGE_NAME": Warning! File /proc/self/maps doesn't exist. Address translation may be limited.\n");
 #endif
 

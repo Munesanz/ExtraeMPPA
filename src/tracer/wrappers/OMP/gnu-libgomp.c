@@ -23,7 +23,7 @@
 
 #include "common.h"
 
-#if defined (HAVE_DLFCN_H) && !defined(OS_RTEMS)
+#if defined (HAVE_DLFCN_H) && !defined(OS_CLUSTER)
 # define __USE_GNU
 # include <dlfcn.h>
 # undef  __USE_GNU
@@ -74,7 +74,7 @@ char *__GOMP_version = NULL;
   }                                                                    \
 }
 
-#if defined(OS_RTEMS)
+#if defined(OS_RTEMS) || defined(OS_CLUSTER)
 extern void __real_GOMP_atomic_start (void) __attribute__((weak));
 extern void __real_GOMP_atomic_end (void) __attribute__((weak));
 extern void __real_GOMP_barrier (void) __attribute__((weak));

@@ -24,7 +24,7 @@
 #ifndef _SAMPLING_H_INCLUDED_
 #define _SAMPLING_H_INCLUDED_
 
-#if !defined(OS_RTEMS)
+#if !defined(OS_RTEMS) && !defined(OS_CLUSTER)
 enum
 {
 	SAMPLING_TIMING_REAL,

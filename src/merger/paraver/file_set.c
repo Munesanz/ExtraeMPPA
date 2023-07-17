@@ -157,7 +157,7 @@ static int newTemporalFile (int taskid, int initial, int depth, char *filename)
 {
 	int ID;
 	//Looks like tmp files are not removed when unlinking in MPPA, so we force to create them inside /tmp
-	#if defined(OS_RTEMS)
+	#if defined(OS_CLUSTER)
 		setenv("TMPDIR","/tmp" , 0);
 	#endif
 	if (initial)
@@ -1335,7 +1335,7 @@ int Search_Synchronization_Times (int taskid, int ntasks, FileSet_t * fset,
 	for (i=0; i<fset->nfiles; i++)
 	{
 		/* All threads within a task share the synchronization times */
-#if !defined(OS_RTEMS)
+#if !defined(OS_CLUSTER)
 		/* In Cluster OS the time sync event may exist in any thread */
 		if (fset->files[i].thread - 1 == 0)
 #endif

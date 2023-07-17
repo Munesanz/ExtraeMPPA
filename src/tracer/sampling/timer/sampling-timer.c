@@ -54,7 +54,7 @@
 #include "threadid.h"
 #include "wrapper.h"
 
-#if !defined(OS_RTEMS)
+#if !defined(OS_RTEMS) && !defined(OS_CLUSTER)
 
 #if defined(SAMPLING_SUPPORT)
 int SamplingSupport = FALSE;

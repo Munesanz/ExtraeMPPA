@@ -23,7 +23,7 @@
 
 #include "common.h"
 
-#if defined (HAVE_DLFCN_H) && !defined(OS_RTEMS)
+#if defined (HAVE_DLFCN_H) && !defined(OS_CLUSTER)
 # define __USE_GNU
 # include <dlfcn.h>
 # undef __USE_GNU

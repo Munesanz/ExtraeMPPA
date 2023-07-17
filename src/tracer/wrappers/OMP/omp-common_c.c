@@ -41,7 +41,7 @@
 		omp_common_get_hook_points_c(TASKID);                          \
 	}                                                                      \
 }
-#if defined (OS_RTEMS)
+#if defined (OS_RTEMS) || defined(OS_CLUSTER)
 
 int (*omp_get_thread_num_real)(void) = NULL;
 void (*omp_set_num_threads_real)(int) = NULL;
@@ -67,7 +67,7 @@ void omp_common_get_hook_points_c (int rank)
 {
 	UNREFERENCED_PARAMETER(rank);
 
-#if defined(OS_RTEMS)
+#if defined(OS_RTEMS) || defined(OS_CLUSTER)
 /* Obtain @ for omp_get_thread_num_real */
 	omp_get_thread_num_real =
 		(int(*)(void)) __real_omp_get_thread_num;
@@ -111,7 +111,7 @@ void omp_common_get_hook_points_c (int rank)
  *                              C WRAPPERS                                    * 
  *                                                                            * 
 \******************************************************************************/
-#if defined(OS_RTEMS)
+#if defined(OS_RTEMS) || defined(OS_CLUSTER)
 
 int __wrap_omp_get_thread_num (void)
 {

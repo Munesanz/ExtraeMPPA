@@ -29,7 +29,7 @@
 #ifdef HAVE_STDIO_H
 # include <stdio.h>
 #endif
-#if defined (HAVE_DLFCN_H) && !defined(OS_RTEMS)
+#if defined (HAVE_DLFCN_H) && !defined(OS_CLUSTER)
 # include <dlfcn.h>
 #endif
 #include "myrinet_hwc.h"

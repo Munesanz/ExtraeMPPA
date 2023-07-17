@@ -141,7 +141,7 @@ void Extrae_setCheckControlFile (int b);
 void Extrae_setCheckControlFileName (const char *f);
 void Extrae_setCheckForGlobalOpsTracingIntervals (int b);
 
-#if defined (OS_RTEMS)
+#if defined(OS_CLUSTER)
 extern int mppa_multiple_clusters;
 extern int mppa_cluster_counters;
 #endif

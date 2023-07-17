@@ -36,7 +36,7 @@
 #  define MAX_HWC 8
 # elif defined (ARCH_PPC)
 #  define MAX_HWC 8
-# elif defined (OS_RTEMS)
+# elif defined (OS_RTEMS) || defined(OS_CLUSTER)
 #  define MAX_HWC 4
 # else
 #  define MAX_HWC 8

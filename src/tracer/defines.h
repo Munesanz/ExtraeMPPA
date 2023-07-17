@@ -51,7 +51,7 @@
 #else /* HAVE_MPI */
 
 /* If we don't have MPI, rely on FC_FUNC if web have detected at configure time! */
-#if !defined(OS_RTEMS)
+#if !defined(OS_RTEMS) && !defined(OS_CLUSTER)
 # if defined(FC_FUNC)
 #  define CtoF77(x) FC_FUNC(x,x)
 # else

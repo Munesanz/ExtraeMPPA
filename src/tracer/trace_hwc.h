@@ -32,7 +32,7 @@
 #if defined(MPI_SUPPORT)
 # include "mpi_interface.h"
 #endif
-#if defined(OS_RTEMS)
+#if defined(OS_RTEMS) || defined(OS_CLUSTER)
 # include "wrapper.h"
 #endif
 
@@ -41,6 +41,7 @@
 	evt.HWCReadSet = ((filter && HWC_IsEnabled()) ? (HWC_Get_Current_Set(tid) + 1) : 0); \
 }
 
+#if defined (OS_CLUSTER)
 /* Store counters values in the event and mark them as read */
 # define HARDWARE_COUNTERS_READ(tid, evt, filter)                      \
 {                                                                      \
@@ -56,6 +57,19 @@
 	/* We write the counters even if there are errors while reading */ \
 	MARK_SET_READ(tid, evt, read_ok);                                  \
 } 
+#else
+/* Store counters values in the event and mark them as read */
+# define HARDWARE_COUNTERS_READ(tid, evt, filter)                      \
+{                                                                      \
+	int read_ok = FALSE;                                               \
+	if (filter && HWC_IsEnabled())                                     \
+	{                                                                  \
+		read_ok = HWC_Read (tid, evt.time, evt.HWCValues);             \
+	}                                                                  \
+	/* We write the counters even if there are errors while reading */ \
+	MARK_SET_READ(tid, evt, read_ok);                                       \
+} 
+#endif
 
 /* Store counters values in the event and mark them as read */
 #if defined(OS_RTEMS)

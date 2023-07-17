@@ -189,6 +189,8 @@ AC_DEFUN([AX_CHECK_POINTER_SIZE],
       POINTER_SIZE=64
    elif test "${IS_GR740_MACHINE}" = "yes" ; then
       POINTER_SIZE=32
+   elif test "${IS_CLUSTEROS_MACHINE}" = "yes" ; then
+      POINTER_SIZE=32
    else
       AC_TRY_RUN(
          [

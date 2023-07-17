@@ -197,7 +197,7 @@ void Extrae_getrusage_Wrapper (void)
 			delta_usage.ru_utime.tv_usec = current_usage.ru_utime.tv_usec - last_usage.ru_utime.tv_usec;
 			delta_usage.ru_stime.tv_sec = current_usage.ru_stime.tv_sec - last_usage.ru_stime.tv_sec;
 			delta_usage.ru_stime.tv_usec = current_usage.ru_stime.tv_usec - last_usage.ru_stime.tv_usec;
-			#if !defined(OS_RTEMS)
+			#if !defined(OS_RTEMS) && !defined(OS_CLUSTER)
 				delta_usage.ru_minflt = current_usage.ru_minflt - last_usage.ru_minflt;
 				delta_usage.ru_majflt = current_usage.ru_majflt - last_usage.ru_majflt;
 				delta_usage.ru_nvcsw = current_usage.ru_nvcsw - last_usage.ru_nvcsw;
@@ -211,7 +211,7 @@ void Extrae_getrusage_Wrapper (void)
 		{
 			TRACE_MISCEVENT(LAST_READ_TIME, RUSAGE_EV, RUSAGE_UTIME_EV,  delta_usage.ru_utime.tv_sec * 1000000 + delta_usage.ru_utime.tv_usec);
 			TRACE_MISCEVENT(LAST_READ_TIME, RUSAGE_EV, RUSAGE_STIME_EV,  delta_usage.ru_stime.tv_sec * 1000000 + delta_usage.ru_stime.tv_usec);
-			#if !defined(OS_RTEMS)
+			#if !defined(OS_RTEMS) && !defined(OS_CLUSTER)
 				TRACE_MISCEVENT(LAST_READ_TIME, RUSAGE_EV, RUSAGE_MINFLT_EV, delta_usage.ru_minflt);
 				TRACE_MISCEVENT(LAST_READ_TIME, RUSAGE_EV, RUSAGE_MAJFLT_EV, delta_usage.ru_majflt);
 				TRACE_MISCEVENT(LAST_READ_TIME, RUSAGE_EV, RUSAGE_NVCSW_EV,  delta_usage.ru_nvcsw);

@@ -62,12 +62,30 @@ AC_DEFUN([AX_SYSTEM_TYPE],
 	   [enable_gr740="${enableval}"],
 	   [enable_gr740="no"]
 	)
+
+	AC_ARG_ENABLE(clusteros,
+	   AC_HELP_STRING(
+	      [--enable-clusteros],
+	      [Enable compilation for the KVX board]
+	   ),
+	   [enable_clusteros="${enableval}"],
+	   [enable_clusteros="no"]
+	)
+
 	IS_GR740_MACHINE=${enable_gr740}
 	if test "${IS_GR740_MACHINE}" = "yes" ; then
 		target_cpu="sparc"
 		target_os="rtems"
 	fi
+
+	IS_CLUSTEROS_MACHINE=${enable_clusteros}
+	if test "${IS_CLUSTEROS_MACHINE}" = "yes" ; then
+		target_cpu="sparc"
+		target_os="clusteros"
+	fi
+
 	AM_CONDITIONAL(IS_GR740_MACHINE, test "${IS_GR740_MACHINE}" = "yes")
+	AM_CONDITIONAL(IS_CLUSTEROS_MACHINE, test "${IS_CLUSTEROS_MACHINE}" = "yes")
 	# Check if this is an Altix machine and if it has an /dev/mmtimer device
 	# (which is a global clock!)
 	AC_ARG_ENABLE(check-altix,
@@ -141,6 +159,8 @@ AC_DEFUN([AX_SYSTEM_TYPE],
 	             AC_DEFINE([OS_DARWIN], [1], [Define if operating system is Darwin]) ;;
 	  rtems*   ) OperatingSystem="rtems"
 	             AC_DEFINE([OS_RTEMS], [1], [Define if operating system is RTEMS]) ;;
+	  clusteros*   ) OperatingSystem="clusteros"
+	             AC_DEFINE([OS_CLUSTER], [1], [Define if operating system is Cluster OS]) ;;
 	esac
 	
 	# Publish these defines for conditional compilation 

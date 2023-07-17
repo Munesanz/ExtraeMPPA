@@ -54,7 +54,7 @@
 /*------------------------------------------------ Global Variables ---------*/
 int HWCEnabled = FALSE;           /* Have the HWC been started? */
 
-#if !defined(SAMPLING_SUPPORT) || defined(OS_RTEMS)
+#if !defined(SAMPLING_SUPPORT) || defined(OS_RTEMS) || defined(OS_CLUSTER)
 int Reset_After_Read = TRUE;
 #else
 int Reset_After_Read = FALSE;
@@ -398,7 +398,7 @@ void HWC_Start_Counters (int num_threads, UINT64 time, int forked)
 	}
 
 	/* Init counters for thread 0 */
-#if defined(OS_RTEMS)
+#if defined(OS_CLUSTER)
 	/* In Cluster OS with multiple clusters support HWC must be initialized only in the cluster selected*/
 	if(!mppa_multiple_clusters)
 		HWCEnabled = HWCBE_START_COUNTERS_THREAD (time, 0, forked);
@@ -602,7 +602,7 @@ int HWC_Read (unsigned int tid, UINT64 time, long long *store_buffer)
 	}
 	return (HWCEnabled && read_ok && reset_ok);
 }
-#if !defined(OS_RTEMS)
+#if !defined(OS_CLUSTER)
 // Sampling is not supported in ClusterOS
 int HWC_Read_Sampling (unsigned int tid, UINT64 time, uint32_t *store_buffer)
 {
