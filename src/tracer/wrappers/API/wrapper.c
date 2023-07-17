@@ -220,6 +220,8 @@ int tracejant_pthread = TRUE;
 #if defined (OS_RTEMS)
 	/***** Global variable to know if we should trace multiple clusters **************/
 	int mppa_multiple_clusters = FALSE;
+	/***** Global variable to know which cluster will trace the hardware counters **************/
+	int mppa_cluster_counters = 0;
 #endif
 
 /* Mutex to prevent double free's from dying pthreads */
@@ -636,7 +638,9 @@ static int read_environment_variables (int me)
 		HWC_Initialize (0);
 		HWC_Parse_Env_Config (me);
 #if defined(OS_RTEMS)
-		HWCBE_INITIALIZE(0);
+//In clusterOS PAPI init is delayed if we use multiple clusters
+		if(!mppa_multiple_clusters)
+			HWCBE_INITIALIZE(0);
 #endif
 	}
 #endif
@@ -924,6 +928,25 @@ static int read_environment_variables (int me)
 		if (me == 0)
 			fprintf (stdout, PACKAGE_NAME": HWC reported in the OpenMP calls.\n");
 		tracejant_hwc_omp = TRUE;
+#if defined (OS_RTEMS)
+		str = getenv("EXTRAE_MPPA_CLUSTER_HWC");
+		if (mppa_multiple_clusters)
+		{
+
+			if(str!=NULL && (!strcmp (str, "0") || !strcmp (str, "1") || !strcmp (str, "2") || !strcmp (str, "3") || !strcmp (str, "4")))
+			{
+				mppa_cluster_counters = atoi(str);
+				if (me == 0)
+					fprintf (stdout, PACKAGE_NAME": Hardware counters will be traced in cluster %d \n", mppa_cluster_counters);
+			}
+			else
+				if(str ==NULL)
+					fprintf (stdout, PACKAGE_NAME": Warning:EXTRAE_MPPA_CLUSTER_HWC is not defined. Cluster 0 will be traced by default.\n");
+				else
+					fprintf (stdout, PACKAGE_NAME": Warning:EXTRAE_MPPA_CLUSTER_HWC only supports ids 0,1,2,3 and 4. Cluster 0 will be traced by default.\n");
+		}
+#endif
+
 	}
 	else
 		tracejant_hwc_omp = FALSE;
@@ -1667,7 +1690,7 @@ int Backend_preInitialize (int me, int world_size, const char *config_file, int 
 		Extrae_OpenMP_init(me);
 
 #if defined(OS_RTEMS) && defined(OMP_SUPPORT)
-		char *str = getenv("ENABLE_MULTIPLE_CLUSTERS");
+		char *str = getenv("EXTRAE_MPPA_ENABLE_MULTIPLE_CLUSTERS");
 		if (str != NULL && (strcmp (str, "1") == 0))
 		{
 			if (me == 0)

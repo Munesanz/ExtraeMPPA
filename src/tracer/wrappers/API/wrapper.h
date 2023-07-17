@@ -143,6 +143,7 @@ void Extrae_setCheckForGlobalOpsTracingIntervals (int b);
 
 #if defined (OS_RTEMS)
 extern int mppa_multiple_clusters;
+extern int mppa_cluster_counters;
 #endif
 /* Are HWC enabled? */
 extern int Trace_HWC_Enabled;  

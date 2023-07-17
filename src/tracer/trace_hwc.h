@@ -32,6 +32,9 @@
 #if defined(MPI_SUPPORT)
 # include "mpi_interface.h"
 #endif
+#if defined(OS_RTEMS)
+# include "wrapper.h"
+#endif
 
 # define MARK_SET_READ(tid, evt, filter)                                                   \
 {                                                                                     \
@@ -41,13 +44,17 @@
 /* Store counters values in the event and mark them as read */
 # define HARDWARE_COUNTERS_READ(tid, evt, filter)                      \
 {                                                                      \
+	int selectedCluster = TRUE;									       \
+	if((mppa_multiple_clusters && \
+	tid/(uint32_t)(1U << (uint32_t)(uintptr_t)&MPPA_COS_NB_CORES_LOG2) != mppa_cluster_counters))  \
+		selectedCluster = FALSE;									   \
 	int read_ok = FALSE;                                               \
-	if (filter && HWC_IsEnabled())                                     \
+	if (selectedCluster && filter && HWC_IsEnabled())                  \
 	{                                                                  \
 		read_ok = HWC_Read (tid, evt.time, evt.HWCValues);             \
 	}                                                                  \
 	/* We write the counters even if there are errors while reading */ \
-	MARK_SET_READ(tid, evt, read_ok);                                       \
+	MARK_SET_READ(tid, evt, read_ok);                                  \
 } 
 
 /* Store counters values in the event and mark them as read */

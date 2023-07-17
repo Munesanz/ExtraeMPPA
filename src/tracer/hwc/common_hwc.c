@@ -398,7 +398,14 @@ void HWC_Start_Counters (int num_threads, UINT64 time, int forked)
 	}
 
 	/* Init counters for thread 0 */
+#if defined(OS_RTEMS)
+	/* In Cluster OS with multiple clusters support HWC must be initialized only in the cluster selected*/
+	if(!mppa_multiple_clusters)
+		HWCEnabled = HWCBE_START_COUNTERS_THREAD (time, 0, forked);
+#else
 	HWCEnabled = HWCBE_START_COUNTERS_THREAD (time, 0, forked);
+#endif
+
 
 	/* Inherit hwc set change values from thread 0 */
 	for (i = 1; i < num_threads; i++)
@@ -595,7 +602,8 @@ int HWC_Read (unsigned int tid, UINT64 time, long long *store_buffer)
 	}
 	return (HWCEnabled && read_ok && reset_ok);
 }
-#if defined(OS_RTEMSS)
+#if !defined(OS_RTEMS)
+// Sampling is not supported in ClusterOS
 int HWC_Read_Sampling (unsigned int tid, UINT64 time, uint32_t *store_buffer)
 {
 	int read_ok = FALSE;

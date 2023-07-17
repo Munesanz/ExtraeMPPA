@@ -68,6 +68,9 @@
 
 static HWC_Definition_t *hwc_used = NULL;
 static unsigned num_hwc_used = 0;
+#if defined(OS_RTEMS)
+static int PAPI_Initialized = 0;
+#endif
 
 static void HWCBE_PAPI_AddDefinition (unsigned event_code, char *code, char *description)
 {
@@ -590,12 +593,22 @@ void HWCBE_PAPI_Initialize (int TRCOptions)
 			return;
 		}
 	}
+#if defined (OS_RTEMS)
+	PAPI_Initialized=1;
+#endif
 }
 
 int HWCBE_PAPI_Init_Thread (UINT64 time, int threadid, int forked)
 {
 	int i, j, rc;
 	PAPI_option_t options;
+
+#if defined(OS_RTEMS)
+/*In ClusterOS papi must be initialized only in the cluster that will trace HWC
+so the papi init is delayed until one thread reads HWC for the first time */
+	if(!PAPI_Initialized)
+		HWCBE_PAPI_Initialize(0);
+#endif
 
 	if (HWC_num_sets <= 0)
 		return FALSE;
