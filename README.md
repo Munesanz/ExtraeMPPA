@@ -5,10 +5,10 @@ WIP
 To build first run autoreconf:
 
 ```console
-$autoreconf -vfi
+$autoreconf -vi
 ```
 
-Then change PATHS and run configure:
+Then replace the required PATHS and run configure:
 
 ```console
 $./configure --prefix=INSTALL_PATH --without-dyninst --with-papi=PAPI_PATH --with-papi-headers=PAPI_HEADERS_PATH --without-mpi --without-unwind --without-binutils --without-libz --disable-nanos --disable-smpss --disable-xml --enable-merge-in-trace --disable-parallel-merge --enable-clusteros --disable-pthread --disable-sampling --disable-pebs-sampling --host=kvx-cos CFLAGS="-g -O2 -fPIC" host_alias=kvx-cos
@@ -17,7 +17,7 @@ $./configure --prefix=INSTALL_PATH --without-dyninst --with-papi=PAPI_PATH --wit
 Finally run make install to compile and install Extrae:
 
 ```console
-make install -j20
+make install -j16
 ```
 
 Extrae

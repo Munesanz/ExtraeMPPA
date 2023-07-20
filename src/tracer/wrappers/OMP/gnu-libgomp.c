@@ -75,6 +75,7 @@ char *__GOMP_version = NULL;
 }
 
 #if defined(OS_RTEMS) || defined(OS_CLUSTER)
+extern void __real_GOMP_teams4 (unsigned int, unsigned int, unsigned int, int) __attribute__((weak));
 extern void __real_GOMP_atomic_start (void) __attribute__((weak));
 extern void __real_GOMP_atomic_end (void) __attribute__((weak));
 extern void __real_GOMP_barrier (void) __attribute__((weak));
@@ -148,6 +149,7 @@ extern void __real_GOMP_doacross_wait (long first, ...) __attribute__((weak));
 
 static int gnu_libgomp_get_hook_points (int rank);
 
+static int (*GOMP_teams4_real)(unsigned int, unsigned int, unsigned int, int) = NULL;
 static void (*GOMP_atomic_start_real)(void) = NULL;
 static void (*GOMP_atomic_end_real)(void) = NULL;
 
@@ -741,6 +743,37 @@ void callme_taskloop_cpyfn(void *arg, void *data)
 /**************************************************************/
 /***** Added (or changed) in OpenMP 3.1 or prior versions *****/
 /**************************************************************/
+int  __wrap_GOMP_teams4 (unsigned int num_teams_low, unsigned int num_teams_high,
+	     unsigned int thread_limit, int first)
+{
+#if defined(DEBUG)
+	fprintf (stderr, PACKAGE_NAME ":" THREAD_LEVEL_LBL "GOMP_teams4 enter: @=%p\n", THREAD_LEVEL_VAR, GOMP_teams4_real);
+#endif
+	
+	RECHECK_INIT(GOMP_teams4_real);
+
+	int res;
+	if (TRACE(GOMP_teams4_real))
+	{
+		Extrae_OpenMP_Work_Entry();
+		res = GOMP_teams4_real(num_teams_low, num_teams_high, thread_limit, first);
+		Extrae_OpenMP_Work_Exit();
+	}
+	else if (GOMP_teams4_real != NULL)
+	{
+		res = GOMP_teams4_real(num_teams_low, num_teams_high, thread_limit, first);
+	}
+	else
+	{
+		fprintf (stderr, PACKAGE_NAME ":" THREAD_LEVEL_LBL "GOMP_teams4: This function is not hooked! Exiting!!\n", THREAD_LEVEL_VAR);
+		exit (-1);
+	}
+#if defined(DEBUG)
+	fprintf (stderr, PACKAGE_NAME ":" THREAD_LEVEL_LBL "GOMP_teams4 exit\n", THREAD_LEVEL_VAR);
+#endif
+
+	return res;
+}
 
 void  __wrap_GOMP_atomic_start (void)
 {
@@ -3023,6 +3056,10 @@ static int gnu_libgomp_get_hook_points (int rank)
   /**********************/
   /***** OpenMP 3.1 *****/
   /**********************/
+	/* Obtain @ for GOMP_atomic_start */
+	GOMP_teams4_real =
+		(int(*)(unsigned int,unsigned int,unsigned int,int)) __real_GOMP_teams4;
+	INC_IF_NOT_NULL(GOMP_teams4_real,count);
 
 	/* Obtain @ for GOMP_atomic_start */
 	GOMP_atomic_start_real =
